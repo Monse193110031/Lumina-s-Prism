@@ -15,7 +15,8 @@ const GREY = {
   800: '#212B36',
   900: '#11171E',
   910: '#2C3E50',
-  950: '#252B5A'
+  950: '#252B5A',
+  960: '#95B8CA'
 };
 
 const PRIMARY = {
@@ -91,6 +92,7 @@ const palette = {
     paper: '#fff',
     default: GREY[300],
     neutral: GREY[200],
+    button: GREY[960]
   },
   action: {
     active: GREY[600],

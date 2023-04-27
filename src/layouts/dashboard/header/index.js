@@ -65,7 +65,7 @@ export default function Header({ data = [], ...other  }) {
       }}
     >
       <NavSection data={navConfig}/>
-      <Box sx={{ flexGrow: 1, alignItems: 'center'}} />
+      <Box sx={{ flexGrow:0 , alignContent: 'center'}} />
 
     </Scrollbar>
   );

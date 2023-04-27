@@ -7,6 +7,7 @@ import { fCurrency } from '../../../utils/formatNumber';
 // components
 import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
+import EditarPopover from './EditarPopover';
 
 // ----------------------------------------------------------------------
 
@@ -49,12 +50,13 @@ export default function ShopProductCard({ product }) {
       </Box>
       
       <Stack spacing={2} sx={{ marginTop:1, marginLeft:2 }} direction="row" alignItems="center" justifyContent="stretch">
-        <Link color="#B3B6B7">
-          <Typography variant="subtitle2" noWrap>
+        
+          <Typography variant="subtitle2" noWrap color="#B3B6B7">
             En inventario: {stock}
           </Typography>
-        </Link><Button sx={{backgroundColor:'#8891C4', width:'50px', color:'#FFFFFF'}}> +
-          </Button></Stack>
+          <EditarPopover/>
+          
+          </Stack>
         
         
 

@@ -41,8 +41,9 @@ function NavItem({ item }) {
           color: 'text.primary',
           bgcolor: 'action.selected',
           fontWeight: 'fontWeightBold',
-          alignContent:'center'
+          alignItem:'center'
         },
+        bgcolor:'background.default'
       }}
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
