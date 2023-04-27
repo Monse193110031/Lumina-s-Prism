@@ -17,6 +17,12 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   
+  {
+    title: 'Acerca de nosotros',
+    path: '/dashboard/blog',
+    icon: icon('ic_blog'),
+  },
+  
 ];
 
 export default navConfig;

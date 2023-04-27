@@ -19,7 +19,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
   paddingRight: theme.spacing(2),
   paddingTop: theme.spacing(1.25),
   boxShadow: theme.customShadows.z20,
-  color: theme.palette.text.primary,
+  color: theme.palette.text.secondary,
   backgroundColor: theme.palette.background.paper,
   borderTopLeftRadius: Number(theme.shape.borderRadius) * 2,
   borderBottomLeftRadius: Number(theme.shape.borderRadius) * 2,

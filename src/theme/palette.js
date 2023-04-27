@@ -13,7 +13,9 @@ const GREY = {
   600: '#637381',
   700: '#454F5B',
   800: '#212B36',
-  900: '#161C24',
+  900: '#11171E',
+  910: '#2C3E50',
+  950: '#252B5A'
 };
 
 const PRIMARY = {
@@ -81,13 +83,13 @@ const palette = {
   grey: GREY,
   divider: alpha(GREY[500], 0.24),
   text: {
-    primary: GREY[800],
-    secondary: GREY[600],
+    primary: GREY[900],
+    secondary: GREY[950],
     disabled: GREY[500],
   },
   background: {
     paper: '#fff',
-    default: GREY[100],
+    default: GREY[300],
     neutral: GREY[200],
   },
   action: {

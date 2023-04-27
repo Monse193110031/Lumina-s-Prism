@@ -8,6 +8,7 @@ export const StyledRootScrollbar = styled('div')(() => ({
   flexGrow: 1,
   height: '100%',
   overflow: 'hidden',
+  
 }));
 
 export const StyledScrollbar = styled(SimpleBar)(({ theme }) => ({
@@ -15,6 +16,7 @@ export const StyledScrollbar = styled(SimpleBar)(({ theme }) => ({
   '& .simplebar-scrollbar': {
     '&:before': {
       backgroundColor: alpha(theme.palette.grey[600], 0.48),
+      
     },
     '&.simplebar-visible:before': {
       opacity: 1,

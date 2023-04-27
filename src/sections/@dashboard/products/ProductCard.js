@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 // @mui
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
+import { Box, Card, Link, Typography, Stack, Button} from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
@@ -15,7 +15,7 @@ const StyledProductImg = styled('img')({
   width: '100%',
   height: '100%',
   objectFit: 'cover',
-  position: 'absolute',
+  position: 'absolute'
 });
 
 // ----------------------------------------------------------------------
@@ -25,10 +25,10 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+  const { name, cover, price, colors, status, priceSale, stock } = product;
 
   return (
-    <Card>
+    <Card sx={{backgroundColor:'#234451'}}>
       <Box sx={{ pt: '100%', position: 'relative' }}>
         {status && (
           <Label
@@ -47,9 +47,19 @@ export default function ShopProductCard({ product }) {
         )}
         <StyledProductImg alt={name} src={cover} />
       </Box>
+      
+      <Stack spacing={2} sx={{ marginTop:1, marginLeft:2 }} direction="row" alignItems="center" justifyContent="stretch">
+        <Link color="#B3B6B7">
+          <Typography variant="subtitle2" noWrap>
+            En inventario: {stock}
+          </Typography>
+        </Link><Button sx={{backgroundColor:'#8891C4', width:'50px', color:'#FFFFFF'}}> +
+          </Button></Stack>
+        
+        
 
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Link color="inherit" underline="hover">
+      <Stack spacing={2} sx={{ p: 2 }}>
+        <Link color="#fff" underline="hover">
           <Typography variant="subtitle2" noWrap>
             {name}
           </Typography>
@@ -57,7 +67,9 @@ export default function ShopProductCard({ product }) {
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
-          <Typography variant="subtitle1">
+          <Typography variant="subtitle1"
+          
+          sx={{color:'#fff'}}>
             <Typography
               component="span"
               variant="body1"

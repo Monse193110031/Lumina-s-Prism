@@ -11,7 +11,6 @@ export const StyledNavItem = styled((props) => <ListItemButton disableGutters {.
   textTransform: 'capitalize',
   color: theme.palette.text.secondary,
   borderRadius: theme.shape.borderRadius,
-  
 }));
 
 export const StyledNavItemIcon = styled(ListItemIcon)({
@@ -22,3 +21,5 @@ export const StyledNavItemIcon = styled(ListItemIcon)({
   alignItems: 'center',
   justifyContent: 'center',
 });
+
+

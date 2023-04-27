@@ -59,7 +59,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<Iconify icon="ic:round-filter-list" />} onClick={onOpenFilter}>
-        Filters&nbsp;
+        Filtros de búsqueda&nbsp;
       </Button>
 
       <Drawer
@@ -67,7 +67,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
         open={openFilter}
         onClose={onCloseFilter}
         PaperProps={{
-          sx: { width: 280, border: 'none', overflow: 'hidden' },
+          sx: { width: 280, border: 'none', overflow: 'hidden'},
         }}
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 1, py: 2 }}>

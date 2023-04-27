@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 // @mui
-import { styled } from '@mui/material/styles';
-import { Box, Stack, AppBar, Toolbar, IconButton } from '@mui/material';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { styled, alpha} from '@mui/material/styles';
+import { Box, Stack, AppBar, Toolbar, Drawer, Typography, Avatar, Link} from '@mui/material';
 // utils
 import { bgBlur } from '../../../utils/cssStyles';
 // components
@@ -11,11 +13,18 @@ import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
 import LanguagePopover from './LanguagePopover';
 import NotificationsPopover from './NotificationsPopover';
+// hooks
+import useResponsive from '../../../hooks/useResponsive';
+// components
+import Scrollbar from '../../../components/scrollbar';
+import NavSection from './NavSection';
+//
+import navConfig from './configNavHead';
 
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
-
+const NAV_WIDTH2 = 1000;
 const HEADER_MOBILE = 64;
 
 const HEADER_DESKTOP = 92;
@@ -36,30 +45,34 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   },
 }));
 
-// ----------------------------------------------------------------------
+
 
 Header.propTypes = {
   onOpenNav: PropTypes.func,
 };
 
-export default function Header({ onOpenNav }) {
+
+export default function Header({ data = [], ...other  }) {
+  
+  const { pathname } = useLocation();
+  const isDesktop = useResponsive('up', 'lg');
+
+  const renderContent = (
+    <Scrollbar
+      sx={{
+        height: 1,
+        '& .simplebar-content': { height:1},
+      }}
+    >
+      <NavSection data={navConfig}/>
+      <Box sx={{ flexGrow: 1, alignItems: 'center'}} />
+
+    </Scrollbar>
+  );
+  
   return (
     <StyledRoot>
       <StyledToolbar>
-        <IconButton
-          onClick={onOpenNav}
-          sx={{
-            mr: 1,
-            color: 'text.primary',
-            display: { lg: 'none' },
-          }}
-        >
-          <Iconify icon="eva:menu-2-fill" />
-        </IconButton>
-
-        <Searchbar />
-        <Box sx={{ flexGrow: 1 }} />
-
         <Stack
           direction="row"
           alignItems="center"
@@ -68,11 +81,54 @@ export default function Header({ onOpenNav }) {
             sm: 1,
           }}
         >
+        
+        <Box
+        
+        component="nav"
+        sx={{
+        flexShrink: { lg: 0 },
+        width: { lg: NAV_WIDTH2 },
+        height:'auto'
+        
+        }}
+        >
+        {isDesktop ? (
+        <Drawer
+        
+          open
+          variant="permanent"
+          PaperProps={{
+            sx: {
+              width: NAV_WIDTH2,
+              bgcolor: 'transparent',
+              height:'auto'
+            },
+          }}
+        >
+          {renderContent}
+        </Drawer>
+        ) : (
+        <Drawer
+          ModalProps={{
+            keepMounted: true,
+          }}
+          PaperProps={{
+            sx: { width: NAV_WIDTH2 },
+          }}
+        >
+          {renderContent}
+        </Drawer>
+         )}
+         </Box>
+      
           <LanguagePopover />
           <NotificationsPopover />
           <AccountPopover />
+          
         </Stack>
       </StyledToolbar>
     </StyledRoot>
   );
 }
+
+// ----------------------------------------------------------------------
