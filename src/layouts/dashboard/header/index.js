@@ -94,7 +94,6 @@ export default function Header({ data = [], ...other  }) {
         >
         {isDesktop ? (
         <Drawer
-        
           open
           variant="permanent"
           PaperProps={{
