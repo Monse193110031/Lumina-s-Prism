@@ -6,7 +6,7 @@ const supabaseKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1cXVjcnhqbG50amxnZnd6Y2pmIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODI2MzA1OTksImV4cCI6MTk5ODIwNjU5OX0.4o4Nx9oQHh9QDwoJ1X4eiv2J_eL71yuHGlOv2GRny7c';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function handleFileUpload(event) {
+export async function handleFileUpload(event) {
   const file = event.target.files[0];
   const fileId = uuidv4();
   const { data, error } = await supabase.storage.from('images').upload(`my-folder/${fileId}`, file, {
@@ -20,14 +20,13 @@ async function handleFileUpload(event) {
   }
 }
 
-async function createProduct() {
+export async function createProduct() {
   return false;
 }
 
-async function getProviders() {
-  const pro = await supabase.from('proveedores').select('*');
-  console.log(pro) 
-  return pro;
-}
+export async function getProviders() {
+  const { data } = await supabase.from('Proveedores').select();
 
-export default { handleFileUpload, createProduct, getProviders };
+  console.log(data);
+  return data;
+}
