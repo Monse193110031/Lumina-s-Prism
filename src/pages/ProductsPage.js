@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Container, Stack, Typography, Button } from '@mui/material';
 // components
 import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
+
 // mock
 import PRODUCTS from '../_mock/products';
 
@@ -32,7 +33,7 @@ export default function ProductsPage() {
         </Typography>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
-          <Button>Añadir producto</Button>
+          
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
             <ProductFilterSidebar
               openFilter={openFilter}
