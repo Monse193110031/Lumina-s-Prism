@@ -18,7 +18,7 @@ const ProveedorSelect = () => {
   return (
     <select>
       {proveedores.map((proveedor) => (
-        <option key={proveedor.id} value={proveedor.id}>
+        <option key={proveedor.idProveedor} value={proveedor.idProveedor}>
           {proveedor.nombreProveedor}
         </option>
       ))}

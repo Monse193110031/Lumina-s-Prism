@@ -20,8 +20,15 @@ export async function handleFileUpload(event) {
   }
 }
 
-export async function createProduct() {
+export async function createProduct(prodcut) {
+  const { data, error } = await supabase.from('Productos').insert([prodcut]);
+
   return false;
+}
+
+export async function getProducts() {
+  const { data, error } = await supabase.from('Productos').select();
+  return data;
 }
 
 export async function getProviders() {
