@@ -37,3 +37,8 @@ export async function getProviders() {
   console.log(data);
   return data;
 }
+
+export function deleteProduct ()
+{
+  
+}
