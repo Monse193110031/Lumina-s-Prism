@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { LoadingButton } from '@mui/lab';
 
 // @mui
 import {
@@ -16,6 +17,7 @@ import {
   Typography,
   RadioGroup,
   FormControlLabel,
+  styled,
 } from '@mui/material';
 // components
 import InputLabel from '@mui/material/InputLabel';
@@ -25,7 +27,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-import { createProduct, handleFileUpload } from './DB/dbFiles';
+import { createProduct, getImage, handleFileUpload } from './DB/dbFiles';
 import { ColorMultiPicker } from '../../../components/color-utils';
 import ProveedorSelect from '../providers/providersLits';
 
@@ -39,20 +41,49 @@ ShopFilterSidebar.propTypes = {
   onCloseFilter: PropTypes.func,
 };
 
+export const ProductImg = styled('img')({
+  top: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+});
+
 export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter }) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState('');
+  const [stock, setStock] = useState(0);
+  const [file, setFile] = useState();
+  const [fileDir, setFileDir] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
-  const handleProductClick = () => {
-    console.log(name, price, description);
-    createProduct({
-      nombreModelo: name,
-      especificaciones: 'es',
-      caracteristicas: description,
-      precioProducto: price,
-      idProveedor: 1,
-    });
+  const handleProductClick = async () => {
+    try {
+      console.log(name, price, description);
+      setLoading(true);
+      const { path } = await handleFileUpload(file);
+      const { publicUrl } = await getImage(path);
+      const result = await createProduct({
+        nombreModelo: name,
+        existencia: stock,
+        caracteristicas: description,
+        precioProducto: price,
+        idProveedor: 1,
+        url: publicUrl,
+      });
+      setLoading(false);
+    } catch (error) {
+      alert(error);
+      setLoading(false);
+    }
+  };
+
+  const handleFile = (event) => {
+    console.log(event);
+    const file = event.target.files[0];
+    setFileDir(URL.createObjectURL(file));
+    console.log(file);
+    setFile(file);
   };
 
   return (
@@ -86,7 +117,6 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               Proveedores
               <ProveedorSelect />
             </Box>
-
             <TextField
               id="Nombre"
               label="Nombre del producto"
@@ -94,7 +124,6 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-
             <FormControl fullWidth sx={{ m: 1 }}>
               <InputLabel htmlFor="outlined-adornment-amount">Precio</InputLabel>
               <OutlinedInput
@@ -108,8 +137,17 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
             </FormControl>
             <TextField
               id="outlined-number"
-              label="En inventario"
-              type="number"
+              label="Inventario"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              type="numeric"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+            />{' '}
+            <TextField
+              id="outlined-number"
+              label="Descripcion"
               InputLabelProps={{
                 shrink: true,
               }}
@@ -118,22 +156,24 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
             />
             <Button variant="contained" component="label">
               Cargar imagen
-              <input hidden accept="image/*" multiple type="file" onChange={handleFileUpload} />
+              <input hidden accept="image/*" multiple type="file" onChange={(event) => handleFile(event)} />
             </Button>
+            <ProductImg src={fileDir} />
           </Stack>
         </Scrollbar>
 
         <Box sx={{ p: 3 }}>
-          <Button
+          <LoadingButton
             fullWidth
             size="large"
             type="submit"
             color="inherit"
             variant="outlined"
             onClick={() => handleProductClick()}
+            loading={isLoading}
           >
             Añadir
-          </Button>
+          </LoadingButton>
         </Box>
       </Drawer>
     </>

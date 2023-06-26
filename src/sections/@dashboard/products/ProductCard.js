@@ -23,10 +23,11 @@ const StyledProductImg = styled('img')({
 
 ShopProductCard.propTypes = {
   product: PropTypes.object,
+  openFilter: PropTypes.func,
 };
 
-export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale, stock } = product;
+export default function ShopProductCard({ product, openFilter }) {
+  const { name, cover, price, colors, status, priceSale, stock, description } = product;
   console.log(product);
   return (
     <Card sx={{ backgroundColor: '#234451' }}>
@@ -59,7 +60,7 @@ export default function ShopProductCard({ product }) {
         <Typography variant="subtitle2" noWrap color="#B3B6B7">
           En inventario: {stock}
         </Typography>
-        <EditarPopover />
+        <EditarPopover product={product} openFilter={openFilter} />
       </Stack>
 
       <Stack spacing={2} sx={{ p: 2 }}>
@@ -68,6 +69,10 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
+
+        <Typography variant="subtitle2" noWrap>
+          {description}
+        </Typography>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { sample } from 'lodash';
-import { getProducts } from '../sections/@dashboard/products/DB/dbFiles';
+import { getImage, getProducts } from '../sections/@dashboard/products/DB/dbFiles';
 
 // ----------------------------------------------------------------------
 
@@ -39,11 +39,12 @@ const products = async () => {
 
     return {
       id: p.idProducto,
-      cover: `/assets/images/products/product_${setIndex}.jpg`,
+      cover: p.url,
       name: p.nombreModelo,
-      stock: STOCK[index],
+      stock: p.existencia,
       price: p.precioProducto,
       priceSale: p.precioProducto,
+      description: p.caracteristicas,
       colors:
         (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
         (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||

@@ -53,7 +53,7 @@ export default function ProductsPage() {
           </Stack>
         </Stack>
 
-        <ProductList products={prodcuts} />
+        <ProductList products={prodcuts} openFilter={handleOpenFilter} />
         <ProductCartWidget />
       </Container>
     </>
