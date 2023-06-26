@@ -113,10 +113,6 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
         <Scrollbar>
           <Stack spacing={3} sx={{ p: 3 }}>
-            <Box>
-              Proveedores
-              <ProveedorSelect />
-            </Box>
             <TextField
               id="Nombre"
               label="Nombre del producto"
