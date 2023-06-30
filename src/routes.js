@@ -11,6 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import ClientsDashboardLayout from './layouts/clientDashboard/ClientsDashboardLayout';
 import SalesPage from './pages/SalesPage';
+import SalePage from './pages/SalePage';
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +44,7 @@ export default function Router() {
         { element: <Navigate to="/clients/products" />, index: true },
         { path: 'products', element: <ProductsPage /> },
         { path: 'history', element: <SalesPage /> },
+        { path: 'sale', element: <SalePage /> },
       ],
     },
     {
