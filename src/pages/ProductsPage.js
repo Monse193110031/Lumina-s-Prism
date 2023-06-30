@@ -23,7 +23,9 @@ export default function ProductsPage() {
 
   const retrieveProducts = async () => {
     const result = await products();
-    setProducts(result);
+    const sorted = result.sort((a, b) => a.name.localeCompare(b.name));
+    console.log(sorted);
+    setProducts(sorted);
   };
 
   useEffect(() => {

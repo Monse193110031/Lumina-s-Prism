@@ -76,6 +76,12 @@ export async function updatebalance(idCliente, saldo) {
   return data;
 }
 
+export async function updateInventory(idProducto, existencia) {
+  const { data, error } = await supabase.from('Producto').update({ existencia }).eq('idProducto', idProducto);
+  console.log(data);
+  return data;
+}
+
 export async function getSales() {
   const { data, error } = await supabase.from('Venta').select();
   return data;
@@ -88,6 +94,25 @@ export async function createSaleDetail(saleDetail) {
 
 export async function getClientSales(id) {
   const { data, error } = await supabase.from('Venta').select().eq('idCliente', id);
+  return data;
+}
+
+export async function getClientSalesDetail(id) {
+  const { data, error } = await supabase
+    .from('VentasDetalle')
+    .select(
+      `idVenta,
+   cantidad,
+   precio,
+   Producto (
+    nombreModelo,
+    caracteristicas,
+    precioProducto,
+    url
+    )
+    `
+    )
+    .eq('idVenta', id);
   return data;
 }
 

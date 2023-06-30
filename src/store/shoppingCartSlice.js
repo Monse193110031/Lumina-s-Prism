@@ -29,6 +29,19 @@ export const selectTotal = (state) =>
   state.counter.value.reduce((acc, item) => {
     return acc + item.price;
   }, 0);
+
+export const selectProductsTotals = (state) =>
+  state.counter.value.reduce((acc, item) => {
+    if (!acc[item.id]) {
+      acc[item.id] = {
+        ...item,
+        quantity: 0,
+      };
+    }
+    acc[item.id].quantity += 1;
+    return acc;
+  }, {});
+
 export const selectProducts = (state) => state.counter.value;
 
 export default counterSlice.reducer;

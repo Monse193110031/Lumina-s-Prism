@@ -1,6 +1,6 @@
 // @mui
 import PropTypes from 'prop-types';
-import { Card, Typography, CardHeader, CardContent } from '@mui/material';
+import { Card, Typography, CardHeader, CardContent, Avatar, Badge } from '@mui/material';
 import { Timeline, TimelineDot, TimelineItem, TimelineContent, TimelineSeparator, TimelineConnector } from '@mui/lab';
 // utils
 import { fDateTime } from '../../../utils/formatTime';
@@ -40,14 +40,16 @@ export default function AppOrderTimeline({ title, subheader, list, ...other }) {
 OrderItem.propTypes = {
   isLast: PropTypes.bool,
   item: PropTypes.shape({
-    time: PropTypes.instanceOf(Date),
+    time: PropTypes.number,
+    quantity: PropTypes.number,
     title: PropTypes.string,
+    url: PropTypes.string,
     type: PropTypes.string,
   }),
 };
 
 function OrderItem({ item, isLast }) {
-  const { title, time } = item;
+  const { title, time, url, quantity } = item;
   return (
     <TimelineItem>
       <TimelineSeparator>
@@ -58,9 +60,12 @@ function OrderItem({ item, isLast }) {
         <Typography variant="subtitle2">{title}</Typography>
 
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          {fDateTime(time)}
+          $ {time}
         </Typography>
       </TimelineContent>
+      <Badge badgeContent={quantity} color="error" max={99}>
+        <Avatar src={url} />
+      </Badge>
     </TimelineItem>
   );
 }

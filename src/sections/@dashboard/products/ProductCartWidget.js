@@ -4,11 +4,17 @@ import { Badge, Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { purchase, selectCount, selectProducts, selectTotal } from '../../../store/shoppingCartSlice';
+import {
+  purchase,
+  selectCount,
+  selectProducts,
+  selectProductsTotals,
+  selectTotal,
+} from '../../../store/shoppingCartSlice';
 
 // component
 import Iconify from '../../../components/iconify';
-import { createSale, createSaleDetail, quoteSale, updatebalance } from './DB/dbFiles';
+import { createSale, createSaleDetail, quoteSale, updateInventory, updatebalance } from './DB/dbFiles';
 
 // ----------------------------------------------------------------------
 
@@ -39,12 +45,20 @@ export default function CartWidget() {
   const count = useSelector(selectCount);
   const totalVenta = useSelector(selectTotal);
   const products = useSelector(selectProducts);
+  const productsTotals = useSelector(selectProductsTotals);
   const dispatch = useDispatch();
 
   const handlePurschae = async () => {
     const { saldo } = await quoteSale(localStorage.getItem('id'));
+    console.log(products);
     console.log(saldo);
+    console.log('totals', productsTotals);
+    console.log('prods', products);
     const hasEnoughMoney = saldo > totalVenta;
+    if (totalVenta === 0) {
+      toast('😨 No hay productos en el carrito');
+      return;
+    }
     toast(
       hasEnoughMoney
         ? `😎 Compra realizada con exito, tu cambio es de $ ${saldo - totalVenta} `
@@ -56,18 +70,23 @@ export default function CartWidget() {
       totalVenta,
       idCliente: localStorage.getItem('id'),
     });
-    products.forEach(async (product) => {
+
+    Object.keys(productsTotals).forEach(async (k) => {
       await createSaleDetail({
         idVenta,
-        idProducto: product.id,
-        cantidad: product.quantity,
+        idProducto: productsTotals[k].id,
+        cantidad: productsTotals[k].quantity,
+        precio: productsTotals[k].price,
       });
+
+      await updateInventory(productsTotals[k].id, productsTotals[k].stock - productsTotals[k].quantity);
     });
 
     await updatebalance(localStorage.getItem('id'), saldo - totalVenta);
 
     console.log(idVenta);
     dispatch(purchase());
+    window.print();
   };
 
   return (

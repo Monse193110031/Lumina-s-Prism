@@ -15,7 +15,7 @@ AppNewsUpdate.propTypes = {
   list: PropTypes.array.isRequired,
 };
 
-export default function AppNewsUpdate({ title, subheader, list, ...other }) {
+export default function AppNewsUpdate({ title, subheader, list, onclick, ...other }) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
@@ -23,18 +23,14 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
       <Scrollbar>
         <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
           {list.map((news) => (
-            <NewsItem key={news.id} news={news} />
+            <Box key={news.id} onClick={() => onclick(news.id)}>
+              <NewsItem news={news} />
+            </Box>
           ))}
         </Stack>
       </Scrollbar>
 
       <Divider />
-
-      <Box sx={{ p: 2, textAlign: 'right' }}>
-        <Button size="small" color="inherit" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
-          View all
-        </Button>
-      </Box>
     </Card>
   );
 }
@@ -43,7 +39,7 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
 
 NewsItem.propTypes = {
   news: PropTypes.shape({
-    description: PropTypes.string,
+    description: PropTypes.number,
     image: PropTypes.string,
     postedAt: PropTypes.instanceOf(Date),
     title: PropTypes.string,
@@ -63,7 +59,7 @@ function NewsItem({ news }) {
         </Link>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-          {description}
+          $ {description}
         </Typography>
       </Box>
 
