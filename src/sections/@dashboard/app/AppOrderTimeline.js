@@ -47,20 +47,11 @@ OrderItem.propTypes = {
 };
 
 function OrderItem({ item, isLast }) {
-  const { type, title, time } = item;
+  const { title, time } = item;
   return (
     <TimelineItem>
       <TimelineSeparator>
-        <TimelineDot
-          color={
-            (type === 'order1' && 'primary') ||
-            (type === 'order2' && 'success') ||
-            (type === 'order3' && 'info') ||
-            (type === 'order4' && 'warning') ||
-            'error'
-          }
-        />
-        {isLast ? null : <TimelineConnector />}
+        <TimelineDot color={'primary'} />
       </TimelineSeparator>
 
       <TimelineContent>

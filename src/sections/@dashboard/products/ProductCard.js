@@ -28,7 +28,6 @@ ShopProductCard.propTypes = {
 
 export default function ShopProductCard({ product, openFilter }) {
   const { name, cover, price, colors, status, priceSale, stock, description } = product;
-  console.log(product);
   return (
     <Card sx={{ backgroundColor: '#234451' }}>
       <Box sx={{ pt: '100%', position: 'relative' }}>
@@ -60,34 +59,24 @@ export default function ShopProductCard({ product, openFilter }) {
         <Typography variant="subtitle2" noWrap color="#B3B6B7">
           En inventario: {stock}
         </Typography>
+
         <EditarPopover product={product} openFilter={openFilter} />
       </Stack>
 
       <Stack spacing={2} sx={{ p: 2 }}>
         <Link color="#fff" underline="hover">
-          <Typography variant="subtitle2" noWrap>
+          <Typography variant="subtitle" noWrap>
             {name}
           </Typography>
         </Link>
 
-        <Typography variant="subtitle2" noWrap>
+        <Typography variant="subtitle2" noWrap sx={{ color: '#fff000' }}>
           {description}
         </Typography>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
           <Typography variant="subtitle1" sx={{ color: '#fff' }}>
-            <Typography
-              component="span"
-              variant="body1"
-              sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through',
-              }}
-            >
-              {priceSale && fCurrency(priceSale)}
-            </Typography>
-            &nbsp;
             {fCurrency(price)}
           </Typography>
         </Stack>

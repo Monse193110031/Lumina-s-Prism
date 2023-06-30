@@ -1,10 +1,15 @@
 import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 // mocks_
-import account from '../../../_mock/account';
+import { useDispatch, useSelector } from 'react-redux';
+import { decrement, increment, selectCount } from '../../../store/shoppingCartSlice';
 import { deleteProduct } from './DB/dbFiles';
 
 // ----------------------------------------------------------------------
@@ -26,23 +31,39 @@ const MENU_OPTIONS = [
 
 export default function EditarPopover({ product, openFilter }) {
   const [open, setOpen] = useState(null);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [isClient, setIsClient] = useState(pathname.includes('clients'));
+
+  const count = useSelector(selectCount);
+  const dispatch = useDispatch();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
+  const addProduct = () => {
+    dispatch(increment(product));
+  };
+
+  const removeProduct = () => {
+    dispatch(decrement(product));
+  };
+
   const handleClose = (action) => {
-    if (action === 'delete') deleteProduct(product);
-    else {
-      openFilter();
+    if (action === 'delete') {
+      deleteProduct(product);
+      navigate(0);
+    } else {
+      openFilter(product);
     }
     setOpen(null);
   };
 
-  return (
-    <>
+  const removeButton = isClient && (
+    <Box>
       <IconButton
-        onClick={handleOpen}
+        onClick={removeProduct}
         sx={{
           p: 0,
           ...(open && {
@@ -58,7 +79,31 @@ export default function EditarPopover({ product, openFilter }) {
           }),
         }}
       >
-        <EditIcon sx={{ color: '#FFF' }} />
+        <RemoveIcon sx={{ color: '#FFFFFF' }} />
+      </IconButton>
+    </Box>
+  );
+  return (
+    <>
+      {removeButton}
+      <IconButton
+        onClick={isClient ? addProduct : handleOpen}
+        sx={{
+          p: 0,
+          ...(open && {
+            '&:before': {
+              zIndex: 1,
+              content: "''",
+              width: '100%',
+              height: '100%',
+              borderRadius: '50%',
+              position: 'absolute',
+              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.8),
+            },
+          }),
+        }}
+      >
+        {isClient ? <AddIcon sx={{ color: '#FFFFFF' }} /> : <EditIcon sx={{ color: '#FFFFFF' }} />}
       </IconButton>
 
       <Popover

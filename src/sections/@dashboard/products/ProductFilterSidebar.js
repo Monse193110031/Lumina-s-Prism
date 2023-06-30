@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { LoadingButton } from '@mui/lab';
+import { useNavigate } from 'react-router';
 
 // @mui
 import {
@@ -27,9 +28,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-import { createProduct, getImage, handleFileUpload } from './DB/dbFiles';
-import { ColorMultiPicker } from '../../../components/color-utils';
-import ProveedorSelect from '../providers/providersLits';
+import { createProduct, getImage, handleFileUpload, updateProduct } from './DB/dbFiles';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +38,7 @@ ShopFilterSidebar.propTypes = {
   openFilter: PropTypes.bool,
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
+  product: PropTypes.object,
 };
 
 export const ProductImg = styled('img')({
@@ -48,30 +48,50 @@ export const ProductImg = styled('img')({
   objectFit: 'cover',
 });
 
-export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter }) {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState(0);
-  const [description, setDescription] = useState('');
-  const [stock, setStock] = useState(0);
+export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, product }) {
+  const [name, setName] = useState(product?.name);
+  const [price, setPrice] = useState(product?.price);
+  const [description, setDescription] = useState(product?.description);
+  const [stock, setStock] = useState(product?.stock);
   const [file, setFile] = useState();
   const [fileDir, setFileDir] = useState('');
   const [isLoading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleProductClick = async () => {
     try {
       console.log(name, price, description);
       setLoading(true);
-      const { path } = await handleFileUpload(file);
-      const { publicUrl } = await getImage(path);
-      const result = await createProduct({
-        nombreModelo: name,
-        existencia: stock,
-        caracteristicas: description,
-        precioProducto: price,
-        idProveedor: 1,
-        url: publicUrl,
-      });
+
+      if (product.id) {
+        console.log('cambio', product);
+        const result = await updateProduct(
+          {
+            nombreModelo: name,
+            existencia: stock,
+            caracteristicas: description,
+            precioProducto: price,
+          },
+          product.id
+        );
+      } else {
+        console.log('alta');
+        const { path } = await handleFileUpload(file);
+        const { publicUrl } = await getImage(path);
+
+        const result = await createProduct({
+          nombreModelo: name,
+          existencia: stock,
+          caracteristicas: description,
+          precioProducto: price,
+          idProveedor: 1,
+          url: publicUrl,
+        });
+      }
+
       setLoading(false);
+      navigate(0);
     } catch (error) {
       alert(error);
       setLoading(false);
@@ -85,6 +105,9 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
     console.log(file);
     setFile(file);
   };
+
+  console.log('dialog', product);
+  console.log('name', name);
 
   return (
     <>
@@ -117,7 +140,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               id="Nombre"
               label="Nombre del producto"
               variant="outlined"
-              value={name}
+              defaultValue={product?.name ?? ''}
               onChange={(e) => setName(e.target.value)}
             />
             <FormControl fullWidth sx={{ m: 1 }}>
@@ -127,7 +150,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
                 label="Amount"
                 type="number"
-                value={price}
+                defaultValue={product?.price ?? ''}
                 onChange={(e) => setPrice(e.target.value)}
               />
             </FormControl>
@@ -138,7 +161,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
                 shrink: true,
               }}
               type="numeric"
-              value={stock}
+              defaultValue={product?.stock ?? ''}
               onChange={(e) => setStock(e.target.value)}
             />{' '}
             <TextField
@@ -147,7 +170,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               InputLabelProps={{
                 shrink: true,
               }}
-              value={description}
+              defaultValue={product?.description ?? ''}
               onChange={(e) => setDescription(e.target.value)}
             />
             <Button variant="contained" component="label">
