@@ -1,4 +1,8 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { LoadingButton } from '@mui/lab';
+import { useNavigate } from 'react-router';
+
 // @mui
 import {
   Box,
@@ -14,38 +18,19 @@ import {
   Typography,
   RadioGroup,
   FormControlLabel,
+  styled,
 } from '@mui/material';
 // components
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-import { ColorMultiPicker } from '../../../components/color-utils';
+import { createProduct, getImage, handleFileUpload, updateProduct } from './DB/dbFiles';
 
 // ----------------------------------------------------------------------
-
-export const SORT_BY_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High-Low' },
-  { value: 'priceAsc', label: 'Price: Low-High' },
-];
-export const FILTER_GENDER_OPTIONS = ['Men', 'Women', 'Kids'];
-export const FILTER_CATEGORY_OPTIONS = ['All', 'Shose', 'Apparel', 'Accessories'];
-export const FILTER_RATING_OPTIONS = ['up4Star', 'up3Star', 'up2Star', 'up1Star'];
-export const FILTER_PRICE_OPTIONS = [
-  { value: 'below', label: 'Below $25' },
-  { value: 'between', label: 'Between $25 - $75' },
-  { value: 'above', label: 'Above $75' },
-];
-export const FILTER_COLOR_OPTIONS = [
-  '#00AB55',
-  '#000000',
-  '#FFFFFF',
-  '#FFC0CB',
-  '#FF4842',
-  '#1890FF',
-  '#94D82D',
-  '#FFC107',
-];
 
 // ----------------------------------------------------------------------
 
@@ -53,13 +38,81 @@ ShopFilterSidebar.propTypes = {
   openFilter: PropTypes.bool,
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
+  product: PropTypes.object,
 };
 
-export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter }) {
+export const ProductImg = styled('img')({
+  top: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+});
+
+export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, product }) {
+  const [name, setName] = useState(product?.name);
+  const [price, setPrice] = useState(product?.price);
+  const [description, setDescription] = useState(product?.description);
+  const [stock, setStock] = useState(product?.stock);
+  const [file, setFile] = useState();
+  const [fileDir, setFileDir] = useState('');
+  const [isLoading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleProductClick = async () => {
+    try {
+      console.log(name, price, description);
+      setLoading(true);
+
+      if (product.id) {
+        console.log('cambio', product);
+        const result = await updateProduct(
+          {
+            nombreModelo: name,
+            existencia: stock,
+            caracteristicas: description,
+            precioProducto: price,
+          },
+          product.id
+        );
+      } else {
+        console.log('alta');
+        const { path } = await handleFileUpload(file);
+        const { publicUrl } = await getImage(path);
+
+        const result = await createProduct({
+          nombreModelo: name,
+          existencia: stock,
+          caracteristicas: description,
+          precioProducto: price,
+          idProveedor: 1,
+          url: publicUrl,
+        });
+      }
+
+      setLoading(false);
+      navigate(0);
+    } catch (error) {
+      alert(error);
+      setLoading(false);
+    }
+  };
+
+  const handleFile = (event) => {
+    console.log(event);
+    const file = event.target.files[0];
+    setFileDir(URL.createObjectURL(file));
+    console.log(file);
+    setFile(file);
+  };
+
+  console.log('dialog', product);
+  console.log('name', name);
+
   return (
     <>
-      <Button disableRipple color="inherit" endIcon={<Iconify icon="ic:round-filter-list" />} onClick={onOpenFilter}>
-        Filters&nbsp;
+      <Button disableRipple color="inherit" onClick={onOpenFilter}>
+        Agregar Productos&nbsp;
       </Button>
 
       <Drawer
@@ -72,7 +125,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 1, py: 2 }}>
           <Typography variant="subtitle1" sx={{ ml: 1 }}>
-            Filters
+            Agregar producto
           </Typography>
           <IconButton onClick={onCloseFilter}>
             <Iconify icon="eva:close-fill" />
@@ -83,96 +136,63 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
         <Scrollbar>
           <Stack spacing={3} sx={{ p: 3 }}>
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Gender
-              </Typography>
-              <FormGroup>
-                {FILTER_GENDER_OPTIONS.map((item) => (
-                  <FormControlLabel key={item} control={<Checkbox />} label={item} />
-                ))}
-              </FormGroup>
-            </div>
-
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Category
-              </Typography>
-              <RadioGroup>
-                {FILTER_CATEGORY_OPTIONS.map((item) => (
-                  <FormControlLabel key={item} value={item} control={<Radio />} label={item} />
-                ))}
-              </RadioGroup>
-            </div>
-
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Colors
-              </Typography>
-              <ColorMultiPicker
-                name="colors"
-                selected={[]}
-                colors={FILTER_COLOR_OPTIONS}
-                onChangeColor={(color) => [].includes(color)}
-                sx={{ maxWidth: 38 * 4 }}
+            <TextField
+              id="Nombre"
+              label="Nombre del producto"
+              variant="outlined"
+              defaultValue={product?.name ?? ''}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <FormControl fullWidth sx={{ m: 1 }}>
+              <InputLabel htmlFor="outlined-adornment-amount">Precio</InputLabel>
+              <OutlinedInput
+                id="Precio"
+                startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                label="Amount"
+                type="number"
+                defaultValue={product?.price ?? ''}
+                onChange={(e) => setPrice(e.target.value)}
               />
-            </div>
-
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Price
-              </Typography>
-              <RadioGroup>
-                {FILTER_PRICE_OPTIONS.map((item) => (
-                  <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />
-                ))}
-              </RadioGroup>
-            </div>
-
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Rating
-              </Typography>
-              <RadioGroup>
-                {FILTER_RATING_OPTIONS.map((item, index) => (
-                  <FormControlLabel
-                    key={item}
-                    value={item}
-                    control={
-                      <Radio
-                        disableRipple
-                        color="default"
-                        icon={<Rating readOnly value={4 - index} />}
-                        checkedIcon={<Rating readOnly value={4 - index} />}
-                        sx={{
-                          '&:hover': { bgcolor: 'transparent' },
-                        }}
-                      />
-                    }
-                    label="& Up"
-                    sx={{
-                      my: 0.5,
-                      borderRadius: 1,
-                      '&:hover': { opacity: 0.48 },
-                    }}
-                  />
-                ))}
-              </RadioGroup>
-            </div>
+            </FormControl>
+            <TextField
+              id="outlined-number"
+              label="Inventario"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              type="numeric"
+              defaultValue={product?.stock ?? ''}
+              onChange={(e) => setStock(e.target.value)}
+            />{' '}
+            <TextField
+              id="outlined-number"
+              label="Descripcion"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              defaultValue={product?.description ?? ''}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <Button variant="contained" component="label">
+              Cargar imagen
+              <input hidden accept="image/*" multiple type="file" onChange={(event) => handleFile(event)} />
+            </Button>
+            <ProductImg src={fileDir} />
           </Stack>
         </Scrollbar>
 
         <Box sx={{ p: 3 }}>
-          <Button
+          <LoadingButton
             fullWidth
             size="large"
             type="submit"
             color="inherit"
             variant="outlined"
-            startIcon={<Iconify icon="ic:round-clear-all" />}
+            onClick={() => handleProductClick()}
+            loading={isLoading}
           >
-            Clear All
-          </Button>
+            Añadir
+          </LoadingButton>
         </Box>
       </Drawer>
     </>

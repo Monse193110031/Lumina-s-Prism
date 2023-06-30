@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 // @mui
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
+import { Box, Card, Link, Typography, Stack, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
 // components
 import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
+import EditarPopover from './EditarPopover';
 
 // ----------------------------------------------------------------------
 
@@ -22,13 +23,13 @@ const StyledProductImg = styled('img')({
 
 ShopProductCard.propTypes = {
   product: PropTypes.object,
+  openFilter: PropTypes.func,
 };
 
-export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
-
+export default function ShopProductCard({ product, openFilter }) {
+  const { name, cover, price, colors, status, priceSale, stock, description } = product;
   return (
-    <Card>
+    <Card sx={{ backgroundColor: '#234451' }}>
       <Box sx={{ pt: '100%', position: 'relative' }}>
         {status && (
           <Label
@@ -48,27 +49,34 @@ export default function ShopProductCard({ product }) {
         <StyledProductImg alt={name} src={cover} />
       </Box>
 
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Link color="inherit" underline="hover">
-          <Typography variant="subtitle2" noWrap>
+      <Stack
+        spacing={2}
+        sx={{ marginTop: 1, marginLeft: 2 }}
+        direction="row"
+        alignItems="center"
+        justifyContent="stretch"
+      >
+        <Typography variant="subtitle2" noWrap color="#B3B6B7">
+          En inventario: {stock}
+        </Typography>
+
+        <EditarPopover product={product} openFilter={openFilter} />
+      </Stack>
+
+      <Stack spacing={2} sx={{ p: 2 }}>
+        <Link color="#fff" underline="hover">
+          <Typography variant="subtitle" noWrap>
             {name}
           </Typography>
         </Link>
 
+        <Typography variant="subtitle2" noWrap sx={{ color: '#fff000' }}>
+          {description}
+        </Typography>
+
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
-          <Typography variant="subtitle1">
-            <Typography
-              component="span"
-              variant="body1"
-              sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through',
-              }}
-            >
-              {priceSale && fCurrency(priceSale)}
-            </Typography>
-            &nbsp;
+          <Typography variant="subtitle1" sx={{ color: '#fff' }}>
             {fCurrency(price)}
           </Typography>
         </Stack>

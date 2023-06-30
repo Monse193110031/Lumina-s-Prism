@@ -1,27 +1,20 @@
 import { faker } from '@faker-js/faker';
 import { sample } from 'lodash';
+import { getClients } from '../sections/@dashboard/products/DB/dbFiles';
 
 // ----------------------------------------------------------------------
 
-const users = [...Array(24)].map((_, index) => ({
-  id: faker.datatype.uuid(),
-  avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
-  name: faker.name.fullName(),
-  company: faker.company.name(),
-  isVerified: faker.datatype.boolean(),
-  status: sample(['active', 'banned']),
-  role: sample([
-    'Leader',
-    'Hr Manager',
-    'UI Designer',
-    'UX Designer',
-    'UI/UX Designer',
-    'Project Manager',
-    'Backend Developer',
-    'Full Stack Designer',
-    'Front End Developer',
-    'Full Stack Developer',
-  ]),
-}));
-
+const users = async () => {
+  const clients = await getClients();
+  console.log('c', clients);
+  const result = clients.map((c, index) => {
+    return {
+      id: faker.datatype.uuid(),
+      avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
+      name: c.nombre,
+      email: c.email,
+    };
+  });
+  return result;
+};
 export default users;

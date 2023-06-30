@@ -1,24 +1,55 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+
+import { useEffect, useState } from 'react';
 // @mui
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, Button } from '@mui/material';
 // components
+import { useLocation } from 'react-router-dom';
+
 import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
+
 // mock
-import PRODUCTS from '../_mock/products';
+import products from '../_mock/products';
 
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
   const [openFilter, setOpenFilter] = useState(false);
+  const [prodcuts, setProducts] = useState([]);
+  const [product, setProduct] = useState();
 
-  const handleOpenFilter = () => {
+  const { pathname } = useLocation();
+  const [isClient, setIsClient] = useState(pathname.includes('clients'));
+
+  const retrieveProducts = async () => {
+    const result = await products();
+    const sorted = result.sort((a, b) => a.name.localeCompare(b.name));
+    console.log(sorted);
+    setProducts(sorted);
+  };
+
+  useEffect(() => {
+    retrieveProducts();
+  }, []);
+
+  const handleOpenFilter = (product) => {
+    console.log(product);
+    setProduct(product);
     setOpenFilter(true);
   };
 
   const handleCloseFilter = () => {
     setOpenFilter(false);
   };
+
+  const productsAdd = !isClient && (
+    <ProductFilterSidebar
+      product={product}
+      openFilter={openFilter}
+      onOpenFilter={handleOpenFilter}
+      onCloseFilter={handleCloseFilter}
+    />
+  );
 
   return (
     <>
@@ -28,21 +59,16 @@ export default function ProductsPage() {
 
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Products
+          Productos
         </Typography>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-            <ProductFilterSidebar
-              openFilter={openFilter}
-              onOpenFilter={handleOpenFilter}
-              onCloseFilter={handleCloseFilter}
-            />
-            <ProductSort />
+            {productsAdd}
           </Stack>
         </Stack>
 
-        <ProductList products={PRODUCTS} />
+        <ProductList products={prodcuts} openFilter={handleOpenFilter} />
         <ProductCartWidget />
       </Container>
     </>
